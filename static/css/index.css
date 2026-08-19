@@ -1,0 +1,599 @@
+/* ==========================================================================
+   VERDICT — project page styles
+   Adapted from the Academic Project Page Template
+   https://github.com/eliahuhorwitz/Academic-project-page-template
+   Licensed under CC BY-SA 4.0
+   ========================================================================== */
+
+:root {
+  --accent:        #2b6cb0;
+  --accent-dark:   #1f4f80;
+  --accent-soft:   #ebf3fb;
+  --ink:           #24292f;
+  --ink-soft:      #4a5568;
+  --rule:          #e3e8ef;
+  --good:          #1f7a4d;
+  --good-soft:     #e8f6ee;
+  --warn-soft:     #fdf2e9;
+  --page-bg:       #ffffff;
+}
+
+body {
+  font-family: 'Noto Sans', 'Google Sans', 'Helvetica Neue', Arial, sans-serif;
+  color: var(--ink);
+  background: var(--page-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+.title, .subtitle, .publication-title, h1, h2, h3, h4,
+.navbar-item, .button {
+  font-family: 'Google Sans', 'Noto Sans', 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* ---------- Navbar ---------- */
+.navbar {
+  border-bottom: 1px solid var(--rule);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: saturate(180%) blur(10px);
+}
+.navbar-brand .navbar-item {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+}
+.navbar-item.nav-link {
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+.navbar-item.nav-link:hover {
+  color: var(--accent);
+  background: transparent;
+}
+
+/* ---------- Hero ---------- */
+.hero.is-light.hero-head-section {
+  background: linear-gradient(180deg, #f7fafd 0%, #ffffff 100%);
+  border-bottom: 1px solid var(--rule);
+}
+.publication-venue {
+  display: inline-block;
+  margin-bottom: 1.1rem;
+  padding: 0.35rem 0.95rem;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+.publication-title {
+  font-weight: 700;
+  line-height: 1.22;
+  letter-spacing: -0.01em;
+}
+.publication-title .method-name {
+  color: var(--accent);
+}
+.publication-subtitle {
+  margin-top: 0.6rem;
+  color: var(--ink-soft);
+  font-size: 1.05rem;
+}
+.publication-authors {
+  margin-top: 1.4rem;
+  font-size: 1.06rem;
+  line-height: 2;
+}
+.publication-authors .author-block {
+  display: inline-block;
+  margin: 0 0.32rem;
+}
+.publication-authors a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+.publication-authors a:hover {
+  border-bottom-color: var(--accent);
+}
+.publication-affiliations {
+  margin-top: 0.55rem;
+  color: var(--ink-soft);
+  font-size: 0.98rem;
+  line-height: 1.85;
+}
+.publication-note {
+  margin-top: 0.35rem;
+  color: #718096;
+  font-size: 0.86rem;
+}
+
+/* ---------- Link buttons ---------- */
+.publication-links {
+  margin-top: 1.8rem;
+}
+.publication-links .button {
+  margin: 0.28rem;
+  border-radius: 999px;
+  font-weight: 600;
+  padding-left: 1.35rem;
+  padding-right: 1.35rem;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.publication-links .button.is-dark {
+  background: #2d3748;
+  border-color: #2d3748;
+}
+.publication-links .button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
+}
+.publication-links .button[disabled],
+.publication-links .button.is-disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ---------- Sections ---------- */
+.section-title {
+  font-size: 1.85rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+.section-title::after {
+  content: "";
+  display: block;
+  width: 54px;
+  height: 3px;
+  margin: 0.7rem auto 0;
+  border-radius: 2px;
+  background: var(--accent);
+}
+.section.is-alt {
+  background: #fafbfd;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+.content-narrow {
+  max-width: 900px;
+  margin: 0 auto;
+}
+.has-text-justified-custom {
+  text-align: justify;
+  line-height: 1.75;
+}
+
+/* ---------- Figures ---------- */
+.figure-block {
+  margin: 0 auto;
+  text-align: center;
+}
+.figure-block img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  border: 1px solid var(--rule);
+  background: #fff;
+}
+.figure-block.is-plain img {
+  border: none;
+}
+.figure-caption {
+  margin-top: 0.9rem;
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+  line-height: 1.65;
+  text-align: justify;
+}
+.figure-caption strong {
+  color: var(--ink);
+}
+
+/* ---------- Agent cards ---------- */
+.agent-card {
+  height: 100%;
+  padding: 1.4rem 1.3rem;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: #fff;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+.agent-card:hover {
+  box-shadow: 0 6px 22px rgba(23, 43, 77, 0.09);
+  transform: translateY(-2px);
+}
+.agent-card .agent-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 0.8rem;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 1.1rem;
+}
+.agent-card h4 {
+  font-size: 1.06rem;
+  font-weight: 700;
+  margin-bottom: 0.45rem;
+}
+.agent-card p {
+  color: var(--ink-soft);
+  font-size: 0.94rem;
+  line-height: 1.6;
+}
+.agent-card .agent-lambda {
+  display: inline-block;
+  margin-top: 0.7rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 5px;
+  background: #f1f4f9;
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+  font-family: 'Latin Modern Math', Georgia, serif;
+}
+
+/* ---------- Highlight / callout ---------- */
+.callout {
+  margin: 1.8rem auto;
+  padding: 1.3rem 1.5rem;
+  border-left: 4px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  background: var(--accent-soft);
+  line-height: 1.7;
+}
+.callout.is-key {
+  border-left-color: var(--good);
+  background: var(--good-soft);
+}
+.callout .callout-label {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--accent-dark);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+.callout.is-key .callout-label {
+  color: var(--good);
+}
+
+/* ---------- Comparison of score vectors ---------- */
+.score-compare {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin: 1.6rem 0;
+}
+.score-box {
+  flex: 1 1 280px;
+  max-width: 380px;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: #fff;
+  text-align: center;
+}
+.score-box .score-vec {
+  font-family: 'Latin Modern Math', Georgia, serif;
+  font-size: 1.28rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.score-box .score-meta {
+  margin-top: 0.4rem;
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+}
+.score-box .score-verdict {
+  display: inline-block;
+  margin-top: 0.75rem;
+  padding: 0.22rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.score-box.is-accept { border-color: #b7e0c9; }
+.score-box.is-accept .score-verdict { background: var(--good-soft); color: var(--good); }
+.score-box.is-reject { border-color: #f0c9b6; }
+.score-box.is-reject .score-verdict { background: var(--warn-soft); color: #b45309; }
+
+/* ---------- Results table ---------- */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: #fff;
+}
+table.results-table {
+  width: 100%;
+  min-width: 780px;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+table.results-table th,
+table.results-table td {
+  padding: 0.55rem 0.75rem;
+  text-align: center;
+  border-bottom: 1px solid var(--rule);
+  white-space: nowrap;
+}
+table.results-table th {
+  background: #f4f7fb;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+table.results-table td:first-child,
+table.results-table th:first-child {
+  text-align: left;
+  position: sticky;
+  left: 0;
+  background: #fff;
+  z-index: 1;
+}
+table.results-table th:first-child { background: #f4f7fb; }
+table.results-table tr.group-row td {
+  background: #eef4fb;
+  font-style: italic;
+  font-weight: 600;
+  text-align: left;
+  color: var(--accent-dark);
+  font-size: 0.86rem;
+}
+table.results-table tr.base-row td,
+table.results-table tr.base-row td:first-child {
+  background: #f7f7f8;
+}
+table.results-table tr.ours-row td,
+table.results-table tr.ours-row td:first-child {
+  background: var(--good-soft);
+  font-weight: 700;
+}
+table.results-table tr.gain-row td,
+table.results-table tr.gain-row td:first-child {
+  color: var(--accent);
+  font-weight: 600;
+  background: #fff;
+}
+table.results-table .std {
+  color: #8b95a5;
+  font-size: 0.76rem;
+}
+table.results-table .venue {
+  color: #98a2b3;
+  font-size: 0.72rem;
+}
+.table-note {
+  margin-top: 0.8rem;
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+/* ---------- Findings list ---------- */
+.findings {
+  margin-top: 2rem;
+}
+.finding-item {
+  padding: 1rem 0;
+  border-top: 1px solid var(--rule);
+}
+.finding-item:last-child { border-bottom: 1px solid var(--rule); }
+.finding-item h4 {
+  font-size: 1.02rem;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+.finding-item p {
+  color: var(--ink-soft);
+  line-height: 1.7;
+}
+
+/* ---------- Stat strip ---------- */
+.stat-strip {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin: 2rem 0 0;
+}
+.stat-item {
+  flex: 1 1 170px;
+  max-width: 230px;
+  padding: 1.1rem 0.8rem;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: #fff;
+  text-align: center;
+}
+.stat-item .stat-value {
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1.2;
+}
+.stat-item .stat-label {
+  margin-top: 0.3rem;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+/* ---------- Carousel ---------- */
+.carousel {
+  position: relative;
+}
+.carousel-track {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: #fff;
+}
+.carousel-slide {
+  display: none;
+  padding: 1rem;
+}
+.carousel-slide.is-active {
+  display: block;
+  animation: fade-in 0.28s ease;
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.carousel-slide img {
+  display: block;
+  max-width: 100%;
+  max-height: 78vh;
+  margin: 0 auto;
+  height: auto;
+}
+.carousel-slide .figure-caption {
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.carousel-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.carousel-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+.carousel-btn:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.carousel-dots {
+  display: flex;
+  gap: 0.45rem;
+}
+.carousel-dot {
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: #cbd5e0;
+  cursor: pointer;
+}
+.carousel-dot.is-active {
+  background: var(--accent);
+  transform: scale(1.15);
+}
+
+/* ---------- Tabs (prompts) ---------- */
+.prompt-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.2rem;
+}
+.prompt-tab {
+  padding: 0.45rem 1.1rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.prompt-tab.is-active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.prompt-panel { display: none; }
+.prompt-panel.is-active { display: block; }
+.prompt-panel img {
+  display: block;
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+}
+
+/* ---------- BibTeX ---------- */
+.bibtex-block {
+  position: relative;
+}
+.bibtex-block pre {
+  padding: 1.3rem 1.4rem;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: #f7f9fc;
+  color: var(--ink);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  overflow-x: auto;
+}
+.copy-btn {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  padding: 0.3rem 0.8rem;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+/* ---------- Footer ---------- */
+.footer {
+  background: #fafbfd;
+  border-top: 1px solid var(--rule);
+  padding: 2.6rem 1.5rem 3rem;
+}
+.footer .content {
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+  line-height: 1.7;
+}
+.footer a { color: var(--accent); }
+
+/* ---------- MathJax sizing ---------- */
+mjx-container[display="true"] {
+  margin: 1.2rem 0 !important;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.2rem 0;
+}
+
+/* ---------- Responsive ---------- */
+@media screen and (max-width: 768px) {
+  .publication-title { font-size: 1.75rem !important; }
+  .section-title { font-size: 1.5rem; }
+  .has-text-justified-custom { text-align: left; }
+  .figure-caption { text-align: left; }
+}

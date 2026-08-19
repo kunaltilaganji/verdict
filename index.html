@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>VERDICT: Training-Free Step-Wise Verification of Multimodal Reasoning</title>
+  <meta name="description" content="VERDICT (ECCV 2026) is a training-free, domain-agnostic step-wise verifier for multimodal reasoning. It treats disagreement among frozen, modality-specialized judges as a first-class verification signal, computing disagreement-aware consensus scores in closed form.">
+  <meta name="keywords" content="VERDICT, ECCV 2026, multimodal reasoning, step-wise verification, MLLM, training-free verification, Nash equilibrium, consensus, process reward model">
+  <meta name="author" content="Rohit Sinha, Kunal Tilaganji, Tanuja Ganu, Nagarajan Natarajan, Amit Sharma, Vineeth Balasubramanian">
+
+  <!-- Open Graph / Twitter cards.
+       TODO: replace the URLs below with your final GitHub Pages URL after deployment. -->
+  <meta property="og:title" content="VERDICT: Training-Free Step-Wise Verification of Multimodal Reasoning">
+  <meta property="og:description" content="ECCV 2026 — Disagreement among frozen multimodal judges is a verification signal, not noise. VERDICT makes it explicit and actionable, in closed form and without any training.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="static/images/method_overview.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="VERDICT (ECCV 2026)">
+  <meta name="twitter:description" content="Training-free step-wise verification of multimodal reasoning via disagreement-aware consensus.">
+  <meta name="twitter:image" content="static/images/method_overview.jpg">
+
+  <link rel="icon" href="static/images/favicon.svg" type="image/svg+xml">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.4/css/academicons.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script defer src="static/js/index.js"></script>
+</head>
+
+<body>
+
+<!-- ====================== NAVBAR ====================== -->
+<nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
+  <div class="container is-max-desktop">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="#top">VERDICT</a>
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+    <div id="navbarMenu" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item nav-link" href="#abstract">Abstract</a>
+        <a class="navbar-item nav-link" href="#idea">Key Idea</a>
+        <a class="navbar-item nav-link" href="#method">Method</a>
+        <a class="navbar-item nav-link" href="#results">Results</a>
+        <a class="navbar-item nav-link" href="#ablations">Ablations</a>
+        <a class="navbar-item nav-link" href="#qualitative">Qualitative</a>
+        <a class="navbar-item nav-link" href="#bibtex">BibTeX</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ====================== HERO ====================== -->
+<section class="hero is-light hero-head-section" id="top" style="padding-top: 5.5rem;">
+  <div class="hero-body">
+    <div class="container is-max-desktop has-text-centered">
+
+      <span class="publication-venue">ECCV 2026</span>
+
+      <h1 class="title is-2 publication-title">
+        <span class="method-name">VERDICT</span>: Training-Free Step-Wise Verification of
+        Multimodal Reasoning via Disagreement-Aware Consensus
+      </h1>
+
+      <p class="publication-subtitle">
+        <strong>VER</strong>ification via <strong>D</strong>isagreement-<strong>I</strong>nformed
+        <strong>C</strong>oupled <strong>T</strong>hresholding
+      </p>
+
+      <!-- To link an author to a homepage, wrap the name in <a href="...">…</a> -->
+      <div class="publication-authors">
+        <span class="author-block">Rohit Sinha<sup>1,*</sup>,</span>
+        <span class="author-block">Kunal Tilaganji<sup>1,*</sup>,</span>
+        <span class="author-block">Tanuja Ganu<sup>2</sup>,</span>
+        <span class="author-block">Nagarajan Natarajan<sup>2</sup>,</span>
+        <span class="author-block">Amit Sharma<sup>2</sup>,</span>
+        <span class="author-block">Vineeth Balasubramanian<sup>1,2</sup></span>
+      </div>
+
+      <div class="publication-affiliations">
+        <sup>1</sup>Indian Institute of Technology, Hyderabad &nbsp;&nbsp;&middot;&nbsp;&nbsp;
+        <sup>2</sup>Microsoft Research
+      </div>
+      <div class="publication-note"><sup>*</sup>Equal contribution</div>
+
+      <div class="publication-links">
+        <a href="https://arxiv.org/abs/2608.10665" class="button is-dark" target="_blank" rel="noopener">
+          <span class="icon"><i class="ai ai-arxiv"></i></span>
+          <span>arXiv</span>
+        </a>
+        <a href="https://arxiv.org/pdf/2608.10665" class="button is-dark" target="_blank" rel="noopener">
+          <span class="icon"><i class="fas fa-file-pdf"></i></span>
+          <span>Paper</span>
+        </a>
+        <a href="https://arxiv.org/pdf/2608.10665" class="button is-dark" target="_blank" rel="noopener">
+          <span class="icon"><i class="fas fa-book-open"></i></span>
+          <span>Supplementary</span>
+        </a>
+        <a href="https://github.com/rohitsinha-iitfellow/mllm_verifiers" class="button is-dark" target="_blank" rel="noopener">
+          <span class="icon"><i class="fab fa-github"></i></span>
+          <span>Code</span>
+        </a>
+        <a href="#bibtex" class="button is-dark">
+          <span class="icon"><i class="fas fa-quote-left"></i></span>
+          <span>BibTeX</span>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ====================== TEASER ====================== -->
+<section class="section" style="padding-top: 2.5rem; padding-bottom: 2rem;">
+  <div class="container is-max-desktop">
+    <div class="figure-block is-plain">
+      <img src="static/images/qualitative_teaser.jpg" alt="A reasoning chain that drifts to the wrong answer, and the same chain stabilized by VERDICT's three verification agents.">
+      <p class="figure-caption">
+        <strong>Reasoning chains fail gradually.</strong> A single locally plausible but visually
+        ungrounded step is enough to send the whole chain to the wrong answer. VERDICT intercepts these
+        steps as they are generated: three frozen, modality-specialized judges score every candidate
+        continuation, and the <em>structure</em> of their disagreement, not just their average
+        confidence, decides which step the chain takes next.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== ABSTRACT ====================== -->
+<section class="section is-alt" id="abstract">
+  <div class="container is-max-desktop">
+    <h2 class="section-title">Abstract</h2>
+    <div class="content-narrow">
+      <p class="has-text-justified-custom">
+        Multimodal large language models often generate reasoning chains containing subtle errors that
+        lead to incorrect answers. Current verification approaches have notable limitations. Existing
+        approaches either require expensive labelled supervision with inconsistent cross-task performance
+        or aggregate scores from multiple sources by simple aggregations, missing a key insight: when
+        these scores disagree, that disagreement itself carries important information about whether a
+        reasoning step is truly valid or not. We formalise this as a coupled scoring problem among
+        disparate, frozen verifiers, interpretable as a coordination game with a unique closed-form
+        equilibrium where agreement signals valid steps while disagreement reveals instability. Towards
+        this end, we propose a training-free domain-agnostic step-wise verification approach we call
+        <strong>VERDICT</strong>: <strong>VER</strong>ification via
+        <strong>D</strong>isagreement-<strong>I</strong>nformed <strong>C</strong>oupled
+        <strong>T</strong>hresholding. To our knowledge, VERDICT is the first training-free verifier that
+        makes the structure of cross-modal disagreement explicit and actionable. It computes consensus
+        scores through a closed-form solution, enabling both disagreement-aware filtering and
+        stability-conscious ranking of reasoning steps. Evaluated across six benchmarks, VERDICT
+        consistently improves over the base model by up to <strong>+5.95%</strong>, and performs
+        competitively with domain-specific critics that demand extensive supervision, demonstrating that
+        cross-modal agreement provides robust verification signals without task-specific adaptation.
+      </p>
+
+      <div class="stat-strip">
+        <div class="stat-item">
+          <div class="stat-value">+5.95</div>
+          <div class="stat-label">points over base model (CV-Bench-3D)</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">6 / 6</div>
+          <div class="stat-label">benchmarks improved, none degraded</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">0</div>
+          <div class="stat-label">labelled examples &amp; training steps</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">closed<br>form</div>
+          <div class="stat-label">no iterative optimization</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== KEY IDEA ====================== -->
+<section class="section" id="idea">
+  <div class="container is-max-desktop">
+    <h2 class="section-title">The Key Idea</h2>
+
+    <div class="content-narrow">
+      <p class="has-text-justified-custom">
+        Averaging destroys the very signal that verification needs. Consider two candidate steps scored by
+        three judges. Unanimous moderate confidence and sharply conflicting evidence can produce the
+        <em>same</em> mean, yet they describe fundamentally different verification states: one is a step
+        everyone finds acceptable, the other is a step whose validity depends on which judge you ask.
+      </p>
+
+      <div class="score-compare">
+        <div class="score-box is-accept">
+          <div class="score-vec">(0.7, &nbsp;0.7, &nbsp;0.7)</div>
+          <div class="score-meta">mean 0.70 &nbsp;&middot;&nbsp; dispersion $\Delta^\ast = 0.00$</div>
+          <div class="score-verdict">Accepted &mdash; genuine consensus</div>
+        </div>
+        <div class="score-box is-reject">
+          <div class="score-vec">(0.9, &nbsp;0.3, &nbsp;0.9)</div>
+          <div class="score-meta">mean 0.70 &nbsp;&middot;&nbsp; dispersion $\Delta^\ast \approx 0.11$</div>
+          <div class="score-verdict">Rejected &mdash; cross-modally unstable</div>
+        </div>
+      </div>
+
+      <p class="has-text-justified-custom">
+        Simple averaging cannot separate these two cases. Neither can plain variance filtering: it treats
+        every judge's deviation as equally meaningful, so a stubborn visual agent and a flexible
+        contextual agent contribute identically to the rejection signal. VERDICT instead
+        <strong>couples</strong> the judges, so each judge's adjusted score depends on where every other
+        judge landed. Disagreement from a judge that should be hard to move counts for more than
+        disagreement from one that should not.
+      </p>
+
+      <div class="callout is-key">
+        <span class="callout-label">Key takeaway</span>
+        When disparate judges disagree about a reasoning step, the <em>pattern</em> of that disagreement
+        is itself a verification signal &mdash; one that principled aggregation can exploit, and that
+        simple averaging throws away.
+      </div>
+    </div>
+
+    <!-- Agent cards -->
+    <div class="columns is-variable is-4" style="margin-top: 2.5rem;">
+      <div class="column is-one-third">
+        <div class="agent-card">
+          <div class="agent-icon"><i class="fas fa-eye"></i></div>
+          <h4>Visual Agent (V)</h4>
+          <p>
+            Asks whether the objects and spatial relationships named in the step are actually verifiable
+            in the image. Rewards accurate spatial description, penalizes unsupported visual claims.
+          </p>
+          <span class="agent-lambda">stubbornness $\lambda_V = 1.5$</span>
+        </div>
+      </div>
+      <div class="column is-one-third">
+        <div class="agent-card">
+          <div class="agent-icon"><i class="fas fa-diagram-project"></i></div>
+          <h4>Logical Agent (L)</h4>
+          <p>
+            Asks whether the step follows from the question and the preceding steps without smuggling in
+            external knowledge. Detects logical leaps, non-sequiturs, and contradictions.
+          </p>
+          <span class="agent-lambda">stubbornness $\lambda_L = 1.0$</span>
+        </div>
+      </div>
+      <div class="column is-one-third">
+        <div class="agent-card">
+          <div class="agent-icon"><i class="fas fa-link"></i></div>
+          <h4>Contextual Agent (C)</h4>
+          <p>
+            Asks whether the step is a valid link in the causal chain and stays bound to the original
+            question. Penalizes drift, speculation, and off-topic elaboration.
+          </p>
+          <span class="agent-lambda">stubbornness $\lambda_C = 0.8$</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="figure-caption content-narrow" style="text-align:center; margin-top:1rem;">
+      All three agents are <strong>frozen</strong> and score in <strong>complete isolation</strong>:
+      they never see one another's scores, are never fine-tuned, and are never calibrated.
+    </p>
+  </div>
+</section>
+
+<!-- ====================== METHOD ====================== -->
+<section class="section is-alt" id="method">
+  <div class="container is-max-desktop">
+    <h2 class="section-title">Method</h2>
+
+    <div class="figure-block is-plain">
+      <img src="static/images/method_overview.jpg" alt="Overview of VERDICT: candidate reasoning steps are scored by three frozen agents, converted to consensus scores in closed form, and filtered by a dual acceptance criterion.">
+      <p class="figure-caption">
+        <strong>An illustrative overview of VERDICT.</strong> Given a multimodal question and a partial
+        reasoning trace, the base model generates candidate continuations that are independently scored by
+        three frozen, modality-specialized agents. A closed-form consensus computation transforms the raw
+        scores into disagreement-aware consensus scores; a dual acceptance criterion then filters by mean
+        confidence and consensus dispersion, selecting the most stable step to extend the reasoning chain.
+      </p>
+    </div>
+
+    <div class="content-narrow" style="margin-top: 2.5rem;">
+
+      <h3 class="title is-5">1. Coupled scoring objective</h3>
+      <p class="has-text-justified-custom">
+        Each agent $i$ selects a reported score $s_i \in [0,1]$ that balances agreement with the other
+        agents against fidelity to its own modality-specific judgment $\hat{s}_i$:
+      </p>
+      $$ u_i(s_i, s_{-i}) \;=\; -\,(s_i - \bar{s}_{-i})^2 \;-\; \lambda_i (s_i - \hat{s}_i)^2 $$
+      <p class="has-text-justified-custom">
+        where $\bar{s}_{-i} = \frac{1}{m-1}\sum_{j \neq i} s_j$ is the mean reported score of the other
+        agents. The first term encourages agreement; the second enforces self-consistency, scaled by the
+        <em>stubbornness</em> $\lambda_i > 0$. Since the objective is strictly concave in each agent's own
+        score, $\partial^2 u_i / \partial s_i^2 = -2(1+\lambda_i) < 0$, the coupled system admits a
+        <strong>unique</strong> fixed point &mdash; equivalently, the unique Nash equilibrium of the
+        induced coordination game (Rosen, 1965).
+      </p>
+
+      <h3 class="title is-5">2. Closed-form consensus</h3>
+      <p class="has-text-justified-custom">
+        At the consensus solution each agent's reported score satisfies
+      </p>
+      $$ s_i^{\ast} \;=\; \frac{\bar{s}_{-i}^{\ast} + \lambda_i \hat{s}_i}{1 + \lambda_i}
+         \qquad\Longleftrightarrow\qquad
+         (1 + \lambda_i)\, s_i^{\ast} - \frac{1}{m-1}\sum_{j \neq i} s_j^{\ast} \;=\; \lambda_i \hat{s}_i $$
+      <p class="has-text-justified-custom">
+        which is an $m \times m$ linear system solved directly from the raw scores &mdash; no iterative
+        optimization, no learning, no approximation. The solution
+        <strong>preserves the mean while dampening disagreement</strong>:
+        $\bar{s}^{\ast} = \frac{1}{m}\sum_i s_i^{\ast} = \frac{1}{m}\sum_i \hat{s}_i$ for any choice of
+        $\{\lambda_i\}$. The consensus can never inflate collective confidence; its entire effect is to
+        redistribute scores around a fixed mean, isolating cross-modal conflict from collective doubt.
+      </p>
+
+      <h3 class="title is-5">3. Dual acceptance criterion</h3>
+      <p class="has-text-justified-custom">
+        From the consensus scores we derive the mean consensus confidence
+        $\bar{s}^{\ast} = \frac{1}{m}\sum_i s_i^{\ast}$ and the consensus dispersion
+        $\Delta^{\ast} = \frac{1}{m}\sum_i |s_i^{\ast} - \bar{s}^{\ast}|$. A candidate is accepted only if
+        both conditions hold:
+      </p>
+      $$ \text{accept}\big(r_t^{(j)}\big) \iff \bar{s}^{\ast (j)} > \tau \;\;\wedge\;\; \Delta^{\ast (j)} < \epsilon $$
+      <p class="has-text-justified-custom">
+        The dispersion check filters candidates where cross-modal evidence fundamentally conflicts; the
+        confidence check ensures sufficient collective endorsement. Among accepted candidates the step
+        with the highest $\bar{s}^{\ast}$ extends the trace. When no candidate satisfies both criteria,
+        the system falls back to continuous ranking by $\bar{s}^{\ast} - \Delta^{\ast}$, so reasoning can
+        always continue while still preferring more stable steps. In practice the fallback path fires on
+        roughly 15% of steps.
+      </p>
+
+      <div class="callout">
+        <span class="callout-label">Worked example</span>
+        Raw scores $\hat{\mathbf{s}} = (0.9,\, 0.3,\, 0.9)$ with
+        $\lambda_V{=}1.5,\ \lambda_L{=}1.0,\ \lambda_C{=}0.8$ yield
+        $\mathbf{s}^{\ast} \approx (0.80,\, 0.55,\, 0.77)$. The outlying Logical agent is pulled from
+        $0.30$ to $0.55$; the stubborn Visual agent shifts only $0.10$, the flexible Contextual agent
+        $0.13$ &mdash; an asymmetry driven directly by the $\lambda_i$ coupling. The result,
+        $\bar{s}^{\ast} \approx 0.71$ and $\Delta^{\ast} \approx 0.11$, <em>passes</em> the confidence
+        check ($0.71 > \tau{=}0.6$) but <em>fails</em> dispersion ($0.11 > \epsilon{=}0.1$), so the step
+        is rejected as cross-modally unstable. Contrast $(0.7,\, 0.7,\, 0.7)$: same raw mean,
+        $\Delta^{\ast} = 0$, accepted. Simple averaging cannot make this distinction.
+      </div>
+
+      <h3 class="title is-5">Why the coupling cannot be faked</h3>
+      <p class="has-text-justified-custom">
+        <strong>Proposition 1 (Consensus dispersion is not recoverable from weighted averages).</strong>
+        For any fixed weight vector $\mathbf{w}$ there exist score vectors
+        $\hat{\mathbf{s}} \neq \hat{\mathbf{s}}'$ with
+        $\mathbf{w}^\top \hat{\mathbf{s}} = \mathbf{w}^\top \hat{\mathbf{s}}'$ yet
+        $\Delta^{\ast}(\hat{\mathbf{s}}) \neq \Delta^{\ast}(\hat{\mathbf{s}}')$. Because
+        $\partial s_i^{\ast} / \partial \hat{s}_j \neq 0$ for $i \neq j$, the residual
+        $|s_i^{\ast} - \bar{s}^{\ast}|$ is not a function of $\hat{s}_i$ alone, so $\Delta^{\ast}$ admits
+        no separable decomposition $\sum_i f_i(\hat{s}_i)$. Concretely, $(0.9, 0.2, 0.9)$ and
+        $(0.7, 0.6, 0.7)$ share the mean $\tfrac{2}{3}$ but give
+        $\Delta^{\ast} \approx 0.13 > \epsilon$ and $\Delta^{\ast} \approx 0.04 < \epsilon$ &mdash;
+        opposite acceptance decisions that no separable measure can reproduce.
+      </p>
+
+      <h3 class="title is-5">Hyperparameters</h3>
+      <p class="has-text-justified-custom">
+        Every hyperparameter is <strong>fixed across all six benchmarks</strong> with no per-task tuning:
+        $\lambda_V{=}1.5$, $\lambda_L{=}1.0$, $\lambda_C{=}0.8$, $n{=}3$ candidates per step,
+        $\tau{=}0.6$, $\epsilon{=}0.1$. Candidates are sampled at $T{=}0.8$, top-$p{=}0.6$. Both the base
+        reasoner and all three judges are Qwen2.5-VL-7B-Instruct.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== RESULTS ====================== -->
+<section class="section" id="results">
+  <div class="container is-max-widescreen">
+    <h2 class="section-title">Results</h2>
+
+    <p class="content-narrow has-text-justified-custom">
+      Accuracy (%) across six multimodal reasoning benchmarks under different verification strategies.
+      <strong>Avg.</strong> is the unweighted mean across all six. All methods share the same base model
+      (Qwen2.5-VL-7B-Instruct, unmodified); domain-agnostic baselines additionally share VERDICT's exact
+      agents and scoring procedure, differing only in how raw scores are combined.
+    </p>
+
+    <div class="table-scroll" style="margin-top: 1.5rem;">
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>3DSRBench</th>
+            <th>CV-Bench-3D</th>
+            <th>CV-Bench-2D</th>
+            <th>BLINK</th>
+            <th>MMStar</th>
+            <th>AI2D</th>
+            <th>Avg.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="base-row">
+            <td>Base Model</td>
+            <td>56.12</td><td>76.39</td><td>74.27</td><td>48.31</td><td>61.25</td><td>81.52</td><td>66.31</td>
+          </tr>
+
+          <tr class="group-row"><td colspan="8">Domain-Specific Critics</td></tr>
+          <tr>
+            <td>LLaVA-Critic</td>
+            <td>52.71 <span class="std">±0.83</span></td>
+            <td>81.58 <span class="std">±0.91</span></td>
+            <td>67.52 <span class="std">±0.82</span></td>
+            <td>49.22 <span class="std">±0.77</span></td>
+            <td>64.07 <span class="std">±0.61</span></td>
+            <td>81.81 <span class="std">±0.44</span></td>
+            <td>66.15</td>
+          </tr>
+          <tr>
+            <td>Critic-V <span class="venue">CVPR&nbsp;25</span></td>
+            <td>53.25 <span class="std">±0.73</span></td>
+            <td>77.66 <span class="std">±0.81</span></td>
+            <td>75.38 <span class="std">±0.79</span></td>
+            <td>46.17 <span class="std">±0.86</span></td>
+            <td>55.83 <span class="std">±0.59</span></td>
+            <td>80.17 <span class="std">±0.75</span></td>
+            <td>64.74</td>
+          </tr>
+          <tr>
+            <td>Sherlock <span class="venue">NeurIPS&nbsp;25</span></td>
+            <td>48.11 <span class="std">±0.93</span></td>
+            <td>58.13 <span class="std">±1.10</span></td>
+            <td>68.78 <span class="std">±1.98</span></td>
+            <td>49.07 <span class="std">±0.89</span></td>
+            <td>57.26 <span class="std">±0.96</span></td>
+            <td>82.77 <span class="std">±0.52</span></td>
+            <td>60.69</td>
+          </tr>
+          <tr>
+            <td>VisionSR1 <span class="venue">ICLR&nbsp;26</span></td>
+            <td>53.05 <span class="std">±1.82</span></td>
+            <td>54.18 <span class="std">±1.05</span></td>
+            <td>73.10 <span class="std">±1.91</span></td>
+            <td>30.09 <span class="std">±1.45</span></td>
+            <td>57.20 <span class="std">±2.73</span></td>
+            <td>80.25 <span class="std">±0.97</span></td>
+            <td>57.98</td>
+          </tr>
+          <tr>
+            <td>DreamPRM <span class="venue">NeurIPS&nbsp;25</span></td>
+            <td>53.08 <span class="std">±1.88</span></td>
+            <td>63.39 <span class="std">±0.98</span></td>
+            <td>75.58 <span class="std">±1.61</span></td>
+            <td>49.89 <span class="std">±0.82</span></td>
+            <td>61.23 <span class="std">±0.59</span></td>
+            <td>81.21 <span class="std">±0.49</span></td>
+            <td>64.06</td>
+          </tr>
+
+          <tr class="group-row"><td colspan="8">Domain-Agnostic Baselines (same agents, different aggregation)</td></tr>
+          <tr>
+            <td>Variance</td>
+            <td>57.21 <span class="std">±0.57</span></td>
+            <td>78.16 <span class="std">±0.68</span></td>
+            <td>76.43 <span class="std">±0.53</span></td>
+            <td>49.61 <span class="std">±0.49</span></td>
+            <td>63.09 <span class="std">±0.47</span></td>
+            <td>81.41 <span class="std">±0.34</span></td>
+            <td>67.65</td>
+          </tr>
+          <tr>
+            <td>Mean</td>
+            <td>58.34 <span class="std">±0.53</span></td>
+            <td>79.77 <span class="std">±0.61</span></td>
+            <td>77.57 <span class="std">±0.51</span></td>
+            <td>50.17 <span class="std">±0.58</span></td>
+            <td>64.14 <span class="std">±0.44</span></td>
+            <td>82.18 <span class="std">±0.36</span></td>
+            <td>68.70</td>
+          </tr>
+          <tr>
+            <td>Min</td>
+            <td>56.11 <span class="std">±0.58</span></td>
+            <td>77.21 <span class="std">±0.63</span></td>
+            <td>75.17 <span class="std">±0.59</span></td>
+            <td>49.39 <span class="std">±0.55</span></td>
+            <td>62.41 <span class="std">±0.46</span></td>
+            <td>81.09 <span class="std">±0.42</span></td>
+            <td>66.90</td>
+          </tr>
+          <tr>
+            <td>Majority</td>
+            <td>57.58 <span class="std">±0.62</span></td>
+            <td>77.37 <span class="std">±0.73</span></td>
+            <td>75.53 <span class="std">±0.68</span></td>
+            <td>48.43 <span class="std">±0.66</span></td>
+            <td>62.10 <span class="std">±0.52</span></td>
+            <td>81.78 <span class="std">±0.48</span></td>
+            <td>67.13</td>
+          </tr>
+          <tr>
+            <td>Max</td>
+            <td>57.37 <span class="std">±0.55</span></td>
+            <td>78.16 <span class="std">±0.56</span></td>
+            <td>76.46 <span class="std">±0.63</span></td>
+            <td>49.17 <span class="std">±0.43</span></td>
+            <td>63.42 <span class="std">±0.58</span></td>
+            <td>82.12 <span class="std">±0.54</span></td>
+            <td>67.78</td>
+          </tr>
+
+          <tr class="ours-row">
+            <td>VERDICT (Ours)</td>
+            <td>59.02 <span class="std">±0.45</span></td>
+            <td>82.34 <span class="std">±0.51</span></td>
+            <td>79.22 <span class="std">±0.53</span></td>
+            <td>51.32 <span class="std">±0.48</span></td>
+            <td>65.88 <span class="std">±0.37</span></td>
+            <td>83.14 <span class="std">±0.32</span></td>
+            <td>70.15</td>
+          </tr>
+          <tr class="gain-row">
+            <td>Gain over base</td>
+            <td>+2.90</td><td>+5.95</td><td>+4.95</td><td>+3.01</td><td>+4.63</td><td>+1.62</td><td>+3.84</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-note content-narrow">
+      Scroll horizontally on small screens. Benchmarks span spatial reasoning
+      (3DSRBench, CV-Bench-3D), visual grounding (CV-Bench-2D, AI2D), and multimodal abstraction
+      (BLINK, MMStar).
+    </p>
+
+    <div class="content-narrow findings">
+      <div class="finding-item">
+        <h4>1. VERDICT improves on every benchmark, and degrades on none.</h4>
+        <p>
+          Gains range from +2.90 on 3DSRBench to +5.95 on CV-Bench-3D, holding across qualitatively
+          different task families. No benchmark drops below the unverified base model &mdash; a property
+          none of the domain-specific critics can claim.
+        </p>
+      </div>
+      <div class="finding-item">
+        <h4>2. Domain-specific critics are cross-task fragile.</h4>
+        <p>
+          Every trained critic we evaluate degrades below baseline on at least two benchmarks. Sherlock
+          drops 18.26 points on CV-Bench-3D; VisionSR1 collapses by 22.21 points on CV-Bench-3D and 18.22
+          on BLINK. Even LLaVA-Critic, which posts the best single domain-specific score on CV-Bench-3D
+          (81.58), simultaneously loses 6.75 points on CV-Bench-2D &mdash; two splits of the
+          <em>same</em> benchmark family. A verifier trained to reward one reasoning style can actively
+          penalize another.
+        </p>
+      </div>
+      <div class="finding-item">
+        <h4>3. The consensus formulation adds value beyond aggregation.</h4>
+        <p>
+          Against five aggregation baselines that use identical agents and scoring, VERDICT beats the
+          strongest (Mean) by +0.68 to +2.57 on every benchmark. Notably, the Variance baseline &mdash;
+          which explicitly tries to use disagreement &mdash; still underperforms, confirming that
+          treating all variance as equivalent is insufficient (Proposition 1).
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== ABLATIONS ====================== -->
+<section class="section is-alt" id="ablations">
+  <div class="container is-max-desktop">
+    <h2 class="section-title">Analysis &amp; Ablations</h2>
+
+    <div class="columns is-variable is-5">
+      <div class="column is-half">
+        <div class="figure-block">
+          <img src="static/images/ablation_strategy.png" alt="Bar chart comparing VERDICT against No Rejection, No Selection, Raw Average and Random selection across benchmarks.">
+          <p class="figure-caption">
+            <strong>Rejection vs. selection.</strong> Removing either mechanism hurts, but removing
+            intelligent ranking (−1.17 to −2.17) costs more than removing filtering (−0.26 to −1.08):
+            consensus-adjusted ranking is the primary driver. Raw Average trails VERDICT by 2.59&ndash;2.95
+            points despite an identical dual-criterion architecture.
+          </p>
+        </div>
+      </div>
+      <div class="column is-half">
+        <div class="figure-block">
+          <img src="static/images/ablation_lambda.png" alt="Line plots showing accuracy on 3DSRBench as each stubbornness parameter is varied.">
+          <p class="figure-caption">
+            <strong>Stubbornness sensitivity.</strong> Varying one $\lambda$ at a time on 3DSRBench gives
+            a clear hierarchy: $\lambda_V$ has the widest range (2.90 pp), $\lambda_L$ intermediate
+            (1.40), $\lambda_C$ narrowest (1.19) &mdash; mirroring the asymmetric design. No setting falls
+            below the base model, and all three curves peak at the same 59.02%.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-variable is-5">
+      <div class="column is-half">
+        <div class="figure-block">
+          <img src="static/images/ablation_tau.png" alt="Accuracy on 3DSRBench across confidence thresholds spanning seven orders of magnitude.">
+          <p class="figure-caption">
+            <strong>Confidence threshold $\tau$.</strong> With $\epsilon = 0.1$ fixed, performance splits
+            into permissive ($\tau \leq 0.01$), intermediate ($\tau = 0.1$–$0.6$) and restrictive
+            ($\tau \geq 1.0$) regimes. The permissive regime is telling: with the filter effectively
+            disabled, consensus-adjusted <em>ranking alone</em> beats the Mean baseline &mdash; the
+            formulation, not the filtering architecture, drives the gain.
+          </p>
+        </div>
+      </div>
+      <div class="column is-half">
+        <div class="figure-block">
+          <img src="static/images/ablation_epsilon.png" alt="Accuracy on 3DSRBench across dispersion tolerances from 0.001 to 3.0.">
+          <p class="figure-caption">
+            <strong>Dispersion tolerance $\epsilon$.</strong> With $\tau = 0.6$ fixed, accuracy peaks on a
+            plateau spanning a full order of magnitude, $\epsilon \in [0.1, 1.0]$. Too strict rejects
+            legitimate steps carrying natural cross-modal tension; too permissive admits steps where the
+            judges never genuinely converged. The decline is gradual in both directions because the
+            fallback ranking and the confidence check act as safety nets.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-variable is-5">
+      <div class="column is-half">
+        <div class="figure-block">
+          <img src="static/images/ablation_judge_scale.png" alt="Accuracy of VERDICT and Mean as judge model size decreases from 7B to 4B to 2B.">
+          <p class="figure-caption">
+            <strong>Judge quality vs. algorithmic gain.</strong> Holding the base reasoner fixed and
+            shrinking the judges from 7B to 2B, both methods degrade &mdash; but VERDICT's margin over
+            Mean <em>widens</em> (+0.68 → +0.89 → +1.21). At 2B, Mean falls 1.65 points below the
+            unverified baseline while VERDICT limits the loss to 0.44. The gains come from algorithmic
+            structure, not judge capability.
+          </p>
+        </div>
+      </div>
+      <div class="column is-half">
+        <div class="figure-block">
+          <img src="static/images/cross_model.png" alt="Base and VERDICT accuracy on 3DSRBench for four different base model families.">
+          <p class="figure-caption">
+            <strong>Generalization across model families.</strong> Swapping the base reasoner across four
+            families while keeping the same frozen Qwen2.5-VL-7B judges yields +2.45 to +4.00 points
+            (mean +3.23). Base-model variability compresses from a 1.33 pp spread to 0.22 pp after
+            verification &mdash; evidence for the plug-in design principle.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-narrow" style="margin-top: 2rem;">
+      <div class="callout">
+        <span class="callout-label">Stubbornness assignment matters</span>
+        Permuting the triple $(\lambda_V{=}1.5,\ \lambda_L{=}1.0,\ \lambda_C{=}0.8)$ on 3DSRBench costs
+        only −0.41 when swapping L↔C, but −1.19 for V↔L and −1.76 for V↔C. As long as $\lambda_V$ stays
+        highest, VERDICT still beats the Mean baseline; drop it below either other agent and performance
+        falls below Mean. On perception-heavy tasks, visual evidence is the least negotiable signal.
+      </div>
+
+      <div class="callout">
+        <span class="callout-label">Computational cost</span>
+        Verification is dominated by generation, not by the linear solve. A reasoning step costs 50&ndash;200
+        tokens while each judge emits only a scalar (1&ndash;5 tokens), so verification queries are roughly
+        $33\times$ cheaper than generation. This gives a theoretical $3.27\times$ overhead against an
+        empirically measured $3.80\times$ wall-clock ratio under sequential execution &mdash; and, unlike
+        domain-specific critics, this overhead is the <em>entire</em> cost. There is no training bill.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== QUALITATIVE ====================== -->
+<section class="section" id="qualitative">
+  <div class="container is-max-desktop">
+    <h2 class="section-title">Qualitative Results</h2>
+    <p class="content-narrow has-text-justified-custom" style="margin-bottom: 1.8rem;">
+      Use the arrows to step through cases where the base model drifts away from the specific scene toward
+      general scene semantics &mdash; and one honest failure case where VERDICT overcorrects.
+    </p>
+
+    <div class="carousel" id="qualCarousel">
+      <div class="carousel-track">
+
+        <div class="carousel-slide is-active">
+          <img src="static/images/qual_1.jpg" loading="lazy" alt="Two spatial reasoning failures: kites versus streetlight height, and a TV compared against the wrong reference object.">
+          <p class="figure-caption">
+            <strong>Prior-driven reasoning.</strong> In (A) the base model reasons from stored
+            expectations about how high kites typically fly relative to streetlights, arriving at an
+            answer that contradicts what is plainly visible. In (B) the TV is correctly located, but the
+            model anchors its comparison to the people in the room rather than the flowers on the mantle,
+            effectively solving a different question. The verification agents resist this drift not by
+            knowing the right answer, but by flagging steps that cannot be reconciled across visual,
+            logical, and contextual perspectives simultaneously.
+          </p>
+        </div>
+
+        <div class="carousel-slide">
+          <img src="static/images/qual_2.jpg" loading="lazy" alt="Depth reasoning failures where visual prominence and relative size mislead the model.">
+          <p class="figure-caption">
+            <strong>Misleading depth cues.</strong> In (A) the model treats visual prominence as a proxy
+            for proximity: the door looks more immediate, so it must be closer. The reasoning is
+            internally consistent but spatially wrong. In (B) relative size &mdash; usually a reliable
+            depth cue &mdash; points the wrong way, and the model follows it without hesitation. Neither
+            chain pauses to reconcile its inference against foreshortening, occlusion, or positional
+            context. Requiring a step to hold across all three perspectives surfaces exactly the moment a
+            single-cue heuristic is doing work it cannot support.
+          </p>
+        </div>
+
+        <div class="carousel-slide">
+          <img src="static/images/qual_3.jpg" loading="lazy" alt="Reference drift: the model substitutes a visually dominant table or desk for the highlighted object.">
+          <p class="figure-caption">
+            <strong>Reference drift under scene complexity.</strong> Both scenes have clearly highlighted
+            objects, yet the base model loses track of which object it is evaluating. In (A) it begins
+            with the highlighted monitor but is pulled toward the table's visual dominance; in (B) a
+            similar substitution occurs with the desk. The error is not misperception but incomplete
+            binding &mdash; the thread connecting each label to its referent frays under the scene's
+            visual weight. The consensus mechanism treats referential consistency as a condition every
+            step must satisfy, not just the first.
+          </p>
+        </div>
+
+        <div class="carousel-slide">
+          <img src="static/images/qual_fail.jpg" loading="lazy" alt="Failure cases where VERDICT overcorrects and the base model answers correctly.">
+          <p class="figure-caption">
+            <strong>Where VERDICT overcorrects.</strong> In (A) both chains check two windows for blinds;
+            the base model accepts a partially visible white blind, while VERDICT &mdash; under pressure
+            to be visually precise &mdash; eliminates it as insufficiently confirmed and answers zero. The
+            mechanism that elsewhere prevents hallucination here suppresses a genuine observation. In (B)
+            no step stool is visible at all: the base model reasons from world knowledge and lands
+            correctly, while VERDICT treats the absence as a hard epistemic boundary. The agents are, by
+            design, strict about visual grounding &mdash; and penalize exactly the common-sense inference
+            this question requires.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="carousel-nav">
+        <button class="carousel-btn carousel-prev" aria-label="Previous example">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="carousel-dots">
+          <button class="carousel-dot is-active" aria-label="Example 1"></button>
+          <button class="carousel-dot" aria-label="Example 2"></button>
+          <button class="carousel-dot" aria-label="Example 3"></button>
+          <button class="carousel-dot" aria-label="Example 4"></button>
+        </div>
+        <button class="carousel-btn carousel-next" aria-label="Next example">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== PROMPTS ====================== -->
+<section class="section is-alt" id="prompts">
+  <div class="container is-max-desktop">
+    <h2 class="section-title">Agent Prompts</h2>
+    <p class="content-narrow has-text-justified-custom" style="margin-bottom: 1.6rem;">
+      Each agent is defined entirely by its prompt &mdash; there are no learned parameters anywhere in the
+      verifier. Every agent returns a single scalar in $[0,1]$.
+    </p>
+
+    <div class="prompt-tabs">
+      <button class="prompt-tab is-active" data-panel="panel-visual">Visual Agent</button>
+      <button class="prompt-tab" data-panel="panel-logical">Logical Agent</button>
+      <button class="prompt-tab" data-panel="panel-contextual">Contextual Agent</button>
+    </div>
+
+    <div class="prompt-panel is-active" id="panel-visual">
+      <img src="static/images/prompt_visual.jpg" loading="lazy" alt="System and task prompt for the Visual Verification Agent.">
+      <p class="figure-caption content-narrow" style="margin-top:0.9rem;">
+        System and task prompt for the <strong>Visual Verification Agent</strong>, which evaluates whether
+        a reasoning step is visually grounded in the image and whether spatial descriptions match the
+        viewer's perspective.
+      </p>
+    </div>
+
+    <div class="prompt-panel" id="panel-logical">
+      <img src="static/images/prompt_logical.jpg" loading="lazy" alt="System and task prompt for the Logical Verification Agent.">
+      <p class="figure-caption content-narrow" style="margin-top:0.9rem;">
+        System and task prompt for the <strong>Logical Verification Agent</strong>, which assesses whether
+        a step follows from the question and previous steps without relying on external knowledge.
+      </p>
+    </div>
+
+    <div class="prompt-panel" id="panel-contextual">
+      <img src="static/images/prompt_contextual.jpg" loading="lazy" alt="System and task prompt for the Contextual Agent.">
+      <p class="figure-caption content-narrow" style="margin-top:0.9rem;">
+        System and task prompt for the <strong>Contextual Agent</strong>, which checks whether a step
+        forms a valid link in the reasoning chain via perceptual grounding, temporal order, and mechanism
+        plausibility.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== LIMITATIONS ====================== -->
+<section class="section" id="limitations">
+  <div class="container is-max-desktop">
+    <h2 class="section-title">Limitations</h2>
+    <div class="content-narrow">
+      <p class="has-text-justified-custom">
+        When all agents are confidently wrong, the consensus converges on an incorrect assessment &mdash;
+        agreement is a signal of stability, not of truth. And no amount of filtering recovers from a base
+        model that produces no viable candidate at all. Characterizing how often these failure modes occur
+        in practice is left to future work. On the practical side, the $3.80\times$ sequential wall-clock
+        overhead is non-trivial, though it is fundamentally cheaper than regenerating whole trajectories
+        and is reducible by verifying adaptively only at high-uncertainty steps.
+      </p>
+      <p class="has-text-justified-custom">
+        Because the coordination-game formulation requires only that heterogeneous evaluators trade off
+        private evidence against consensus, we expect VERDICT to generalize beyond multimodal reasoning
+        &mdash; to reward model ensembles, multi-agent evaluation, and compositional code verification.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== BIBTEX ====================== -->
+<section class="section is-alt" id="bibtex">
+  <div class="container is-max-desktop">
+    <h2 class="section-title">BibTeX</h2>
+    <div class="bibtex-block content-narrow">
+      <button class="copy-btn" data-target="bibtex-code">Copy</button>
+      <pre id="bibtex-code">@inproceedings{sinha2026verdict,
+  title     = {{VERDICT}: Training-Free Step-Wise Verification of Multimodal
+               Reasoning via Disagreement-Aware Consensus},
+  author    = {Sinha, Rohit and Tilaganji, Kunal and Ganu, Tanuja and
+               Natarajan, Nagarajan and Sharma, Amit and
+               Balasubramanian, Vineeth},
+  booktitle = {European Conference on Computer Vision (ECCV)},
+  year      = {2026}
+}</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== FOOTER ====================== -->
+<footer class="footer">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-10 has-text-centered">
+        <div class="content">
+          <p>
+            <a href="https://arxiv.org/abs/2608.10665" target="_blank" rel="noopener">arXiv</a> &nbsp;&middot;&nbsp;
+            <a href="https://github.com/rohitsinha-iitfellow/mllm_verifiers" target="_blank" rel="noopener">Code</a> &nbsp;&middot;&nbsp;
+            <a href="#bibtex">Cite</a>
+          </p>
+          <p>
+            This website is licensed under a
+            <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">
+              Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+          <p>
+            This page was built using the
+            <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank" rel="noopener">
+              Academic Project Page Template</a>,
+            which was adopted from the
+            <a href="https://nerfies.github.io" target="_blank" rel="noopener">Nerfies</a> project page.
+            You are free to borrow the source code of this website; we just ask that you link back to
+            this page in the footer.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
