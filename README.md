@@ -42,12 +42,22 @@ The repo is already pushed to `github.com/kunaltilaganji/verdict`. To go live:
 2. Wait ~1–2 minutes (the **Actions** tab shows a "pages build and deployment" run), then visit
    **https://kunaltilaganji.github.io/verdict/**
 
-> **Repo name casing.** The remote is currently `kunaltilaganji/VERDICT` (uppercase). GitHub Pages
-> derives the URL path from the repository name, so to get exactly `.../verdict/` as intended, rename
-> the repo to lowercase under **Settings → General → Repository name → `verdict`**. GitHub keeps a
-> redirect from the old name, and `git push` continues to work from the existing remote. The
-> `og:url` / `canonical` / social-card tags in `index.html` are already written against the lowercase
-> URL — if you decide to keep the uppercase name instead, update those four tags in the `<head>`.
+> **Rename the repo to lowercase first — this is required, not cosmetic.** The remote is currently
+> `kunaltilaganji/VERDICT`. The repository-name segment of a GitHub Pages URL **is case-sensitive**:
+> with the repo named `VERDICT`, the site answers only at `https://kunaltilaganji.github.io/VERDICT/`
+> and `.../verdict/` returns 404. (The `kunaltilaganji` part is a subdomain, so its casing does not
+> matter.) You also cannot simply create a second lowercase repo — GitHub treats repository names as
+> case-insensitive for uniqueness, so `verdict` and `VERDICT` cannot coexist under one account.
+>
+> Fix: **Settings → General → Repository name → `verdict` → Rename**. GitHub keeps a redirect from the
+> old name, so existing clones keep working; still, tidy the local remote afterwards:
+>
+> ```bash
+> git remote set-url origin git@github.com:kunaltilaganji/verdict.git
+> ```
+>
+> The `canonical`, `og:url`, `og:image` and `twitter:image` tags in `index.html` are already written
+> against the lowercase URL, so no HTML edit is needed once renamed.
 
 ### Updating the page later
 
