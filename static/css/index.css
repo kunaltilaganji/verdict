@@ -126,6 +126,12 @@ body {
   background: #2d3748;
   border-color: #2d3748;
 }
+/* Inline SVG icons (arXiv) — sized like a Font Awesome glyph, inherits button colour. */
+.publication-links .icon svg {
+  width: 1.15em;
+  height: 1.15em;
+  fill: currentColor;
+}
 .publication-links .button:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);

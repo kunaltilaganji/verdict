@@ -9,16 +9,19 @@
   <meta name="keywords" content="VERDICT, ECCV 2026, multimodal reasoning, step-wise verification, MLLM, training-free verification, Nash equilibrium, consensus, process reward model">
   <meta name="author" content="Rohit Sinha, Kunal Tilaganji, Tanuja Ganu, Nagarajan Natarajan, Amit Sharma, Vineeth Balasubramanian">
 
-  <!-- Open Graph / Twitter cards.
-       TODO: replace the URLs below with your final GitHub Pages URL after deployment. -->
+  <link rel="canonical" href="https://kunaltilaganji.github.io/verdict/">
+
+  <!-- Open Graph / Twitter cards -->
   <meta property="og:title" content="VERDICT: Training-Free Step-Wise Verification of Multimodal Reasoning">
+  <meta property="og:url" content="https://kunaltilaganji.github.io/verdict/">
+  <meta property="og:site_name" content="VERDICT (ECCV 2026)">
   <meta property="og:description" content="ECCV 2026 — Disagreement among frozen multimodal judges is a verification signal, not noise. VERDICT makes it explicit and actionable, in closed form and without any training.">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="static/images/method_overview.jpg">
+  <meta property="og:image" content="https://kunaltilaganji.github.io/verdict/static/images/method_overview.jpg">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="VERDICT (ECCV 2026)">
   <meta name="twitter:description" content="Training-free step-wise verification of multimodal reasoning via disagreement-aware consensus.">
-  <meta name="twitter:image" content="static/images/method_overview.jpg">
+  <meta name="twitter:image" content="https://kunaltilaganji.github.io/verdict/static/images/method_overview.jpg">
 
   <link rel="icon" href="static/images/favicon.svg" type="image/svg+xml">
 
@@ -27,7 +30,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.4/css/academicons.min.css">
   <link rel="stylesheet" href="static/css/index.css">
 
   <script>
@@ -84,14 +86,13 @@
         <strong>C</strong>oupled <strong>T</strong>hresholding
       </p>
 
-      <!-- To link an author to a homepage, wrap the name in <a href="...">…</a> -->
       <div class="publication-authors">
-        <span class="author-block">Rohit Sinha<sup>1,*</sup>,</span>
-        <span class="author-block">Kunal Tilaganji<sup>1,*</sup>,</span>
-        <span class="author-block">Tanuja Ganu<sup>2</sup>,</span>
-        <span class="author-block">Nagarajan Natarajan<sup>2</sup>,</span>
-        <span class="author-block">Amit Sharma<sup>2</sup>,</span>
-        <span class="author-block">Vineeth Balasubramanian<sup>1,2</sup></span>
+        <span class="author-block"><a href="https://www.linkedin.com/in/rohit-sinha1/" target="_blank" rel="noopener">Rohit Sinha</a><sup>1,*</sup>,</span>
+        <span class="author-block"><a href="https://sites.google.com/view/kunaltilaganji" target="_blank" rel="noopener">Kunal Tilaganji</a><sup>1,*</sup>,</span>
+        <span class="author-block"><a href="https://www.microsoft.com/en-us/research/people/taganu/" target="_blank" rel="noopener">Tanuja Ganu</a><sup>2</sup>,</span>
+        <span class="author-block"><a href="https://www.microsoft.com/en-us/research/people/nagarajn/" target="_blank" rel="noopener">Nagarajan Natarajan</a><sup>2</sup>,</span>
+        <span class="author-block"><a href="https://www.microsoft.com/en-us/research/people/amshar/" target="_blank" rel="noopener">Amit Sharma</a><sup>2</sup>,</span>
+        <span class="author-block"><a href="https://www.microsoft.com/en-us/research/people/vineethn/" target="_blank" rel="noopener">Vineeth Balasubramanian</a><sup>1,2</sup></span>
       </div>
 
       <div class="publication-affiliations">
@@ -102,16 +103,17 @@
 
       <div class="publication-links">
         <a href="https://arxiv.org/abs/2608.10665" class="button is-dark" target="_blank" rel="noopener">
-          <span class="icon"><i class="ai ai-arxiv"></i></span>
+          <span class="icon">
+            <svg viewBox="0 0 448 512" role="img" aria-hidden="true" focusable="false">
+              <path d="m 119.65,351.996 c -5.84961,0.13477 -11.1943,-3.29883 -13.502,-8.67578 -2.19629,-5.27051 -0.61914,-8.9668 4.19727,-15.8652 7.05469,-10.3799 78.8242,-96.5625 78.8242,-96.5625 l -15.8828,-14.8633 c -13.3809,-13.3779 -13.9561,-31.333 -1.50977,-43.7754 l 18.4922,-17.6133 -51.5977,-63.377 c -4.00586,-4.26758 -6.48535,-11.7559 -4.24805,-17.1309 2.27832,-5.53613 7.69727,-9.12891 13.6836,-9.07031 3.83398,0.0957 7.43262,1.87402 9.83789,4.86133 l 61.3691,57.0566 94.5762,-90.0703 c 3.19434,-3.08398 7.44336,-4.83984 11.8828,-4.91016 1.60449,0.0039 3.19824,0.245117 4.73242,0.714844 5.7793,1.80566 10.249,6.41797 11.8711,12.252 1.2998,5.47363 -0.27637,11.2334 -4.18164,15.2832 l -83.0859,100.011996 14.8789,13.834 c 11.0957,10.0029 11.1543,27.3906 0.12695,37.4688 l -16.2949,15.6309 56.2559,66.4434 0.0742,0.0859 0.0664,0.0899 c 5.02734,6.53125 7.43164,11.5615 4.83984,17.9395 -3.13379,5.96875 -8.69727,10.29 -15.2559,11.8516 -0.67676,0.0908 -1.35938,0.13574 -2.04297,0.13671 l -0.004,-0.0117 c -4.42871,-0.27051 -8.61035,-2.13086 -11.7754,-5.24023 l -0.13086,-0.10743 -0.12304,-0.11132 -65.207,-59.127 -89.8965,86.2402 c 0,0 -5.33398,6.47754 -10.9707,6.61133 z m 178.104,-33.041 c 0.47852,-0.002 0.95703,-0.0332 1.43164,-0.0957 4.84277,-1.33301 8.95605,-4.54004 11.4316,-8.91016 1.44922,-3.5625 1.00293,-6.45703 -4.19727,-13.2148 l -56.0586,-66.2188 -26.375,25.3027 64.9551,58.9062 c 2.33887,2.41504 5.46484,3.91113 8.8125,4.2168 v 0.0137 z M 192.436,227.402 334.446,57.244 c 2.78711,-3.48926 4.5293,-6.97949 3.3418,-10.9121 -1.16113,-4.30273 -4.43457,-7.71777 -8.68555,-9.05664 -1.08105,-0.333984 -2.20508,-0.503906 -3.33594,-0.505859 -3.20801,0.07617 -6.26953,1.35645 -8.57617,3.58789 l -142.033,135.284999 c -11.1719,11.1719 -9.48242,26.0195 1.39258,36.8945 z"/>
+            </svg>
+          </span>
           <span>arXiv</span>
         </a>
-        <a href="https://arxiv.org/pdf/2608.10665" class="button is-dark" target="_blank" rel="noopener">
+        <!-- Placeholder: push static/pdfs/poster.pdf to the repo and this button goes live as-is. -->
+        <a href="static/pdfs/poster.pdf" class="button is-dark" target="_blank" rel="noopener">
           <span class="icon"><i class="fas fa-file-pdf"></i></span>
-          <span>Paper</span>
-        </a>
-        <a href="https://arxiv.org/pdf/2608.10665" class="button is-dark" target="_blank" rel="noopener">
-          <span class="icon"><i class="fas fa-book-open"></i></span>
-          <span>Supplementary</span>
+          <span>Poster</span>
         </a>
         <a href="https://github.com/rohitsinha-iitfellow/mllm_verifiers" class="button is-dark" target="_blank" rel="noopener">
           <span class="icon"><i class="fab fa-github"></i></span>

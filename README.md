@@ -14,7 +14,7 @@ Static site — plain HTML/CSS/JS, no build step, no npm, no Jekyll.
     ├── css/index.css     # all styles
     ├── js/index.js       # carousel, tabs, navbar burger, copy-BibTeX
     ├── images/           # figures exported from the paper
-    └── pdfs/             # drop paper.pdf / supplementary.pdf here (optional)
+    └── pdfs/             # drop poster.pdf here when ready
 ```
 
 ## Preview locally
@@ -30,40 +30,24 @@ how GitHub Pages will serve it.
 
 ---
 
-## Deploy to GitHub Pages
+## Deploy to GitHub Pages (Option A — project site)
 
-Two options. **Option A** gives you `https://<username>.github.io/verdict/`, **Option B** gives you
-`https://<username>.github.io/` (one per account).
+The repo is already pushed to `github.com/kunaltilaganji/verdict`. To go live:
 
-### Option A — project site (recommended)
-
-1. Create a new **public** repository on GitHub, e.g. `verdict` (public is required for Pages on a
-   free account).
-
-2. Push this folder to it:
-
-   ```bash
-   cd /data1/kunal.prjt/verdict-project-page
-   git init
-   git add .
-   git commit -m "VERDICT project page"
-   git branch -M main
-   git remote add origin https://github.com/<username>/verdict.git
-   git push -u origin main
-   ```
-
-3. On GitHub: **Settings → Pages**.
+1. **Settings → Pages**
    - *Source*: **Deploy from a branch**
    - *Branch*: `main`, folder `/ (root)`
    - **Save**
 
-4. Wait ~1–2 minutes (watch the **Actions** tab for the "pages build and deployment" run), then visit
-   `https://<username>.github.io/verdict/`.
+2. Wait ~1–2 minutes (the **Actions** tab shows a "pages build and deployment" run), then visit
+   **https://kunaltilaganji.github.io/verdict/**
 
-### Option B — user site
-
-Name the repository exactly `<username>.github.io` and push the same way. It is served at
-`https://<username>.github.io/` with no subpath.
+> **Repo name casing.** The remote is currently `kunaltilaganji/VERDICT` (uppercase). GitHub Pages
+> derives the URL path from the repository name, so to get exactly `.../verdict/` as intended, rename
+> the repo to lowercase under **Settings → General → Repository name → `verdict`**. GitHub keeps a
+> redirect from the old name, and `git push` continues to work from the existing remote. The
+> `og:url` / `canonical` / social-card tags in `index.html` are already written against the lowercase
+> URL — if you decide to keep the uppercase name instead, update those four tags in the `<head>`.
 
 ### Updating the page later
 
@@ -71,35 +55,27 @@ Name the repository exactly `<username>.github.io` and push the same way. It is 
 git add -A && git commit -m "Update project page" && git push
 ```
 
-Pages redeploys automatically on every push to the configured branch. Hard-refresh
+Pages redeploys automatically on every push to `main`. Hard-refresh
 (<kbd>Ctrl/Cmd</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd>) if you still see the old version — the CDN caches
 aggressively.
 
 ### Custom domain (optional)
 
-Add a file named `CNAME` at the repo root containing just your domain (e.g. `verdict-eccv.com`),
-point a DNS `CNAME` record at `<username>.github.io`, then set the domain under **Settings → Pages**.
+Add a file named `CNAME` at the repo root containing just your domain, point a DNS `CNAME` record at
+`kunaltilaganji.github.io`, then set the domain under **Settings → Pages**.
 
 ---
 
-## Before you publish — checklist
+## Outstanding items
 
-- [ ] **Code link.** The Code button and footer point to
-      `https://github.com/rohitsinha-iitfellow/mllm_verifiers`. If that repo is private, either make it
-      public or update the two links in `index.html` (search for `mllm_verifiers`) — otherwise visitors
-      get a 404.
-- [ ] **arXiv links.** Currently `https://arxiv.org/abs/2608.10665` and `.../pdf/2608.10665`.
-      Confirm they resolve.
-- [ ] **Supplementary button.** It currently reuses the arXiv PDF. If you have a separate
-      supplementary PDF, put it in `static/pdfs/` and point the button at
-      `static/pdfs/supplementary.pdf`.
-- [ ] **Author links.** Author names are plain text. To link one to a homepage, wrap it:
-      `<span class="author-block"><a href="https://...">Rohit Sinha</a><sup>1,*</sup>,</span>`
-- [ ] **Social preview.** The `og:image` / `twitter:image` meta tags use a relative path, which some
-      scrapers ignore. After deploying, replace them with the absolute URL, e.g.
-      `https://<username>.github.io/verdict/static/images/method_overview.jpg`.
-- [ ] **Poster / video.** If you get a poster or teaser video, add a button in `.publication-links`
-      and a section — the CSS classes (`figure-block`, `section-title`, `carousel`) are reusable.
+- [ ] **Poster.** The Poster button points at `static/pdfs/poster.pdf`, which does not exist yet.
+      Drop the file in at exactly that path and push — the button goes live with no HTML change.
+      Until then it 404s, so either push the poster before announcing the page, or temporarily
+      comment out that `<a>` block in `index.html` (it is marked with a `<!-- Placeholder -->` comment).
+- [ ] **Code link.** Points at `https://github.com/rohitsinha-iitfellow/mllm_verifiers`, currently
+      private. Make it public (or repoint the two links — hero button and footer) before launch.
+- [ ] **Author links.** All six are live in the hero. To add ORCID/Scholar icons alongside, extend
+      `.publication-links` in the same pattern.
 
 ---
 
@@ -126,8 +102,14 @@ and (where large) converted to JPEG. To regenerate after updating a figure, re-e
 
 ## External dependencies
 
-Loaded from CDN (no vendoring needed): Bulma 0.9.4, Font Awesome 6.4.2, Academicons 1.9.4,
-MathJax 3, Google Fonts (Noto Sans). Everything else is local.
+Loaded from CDN: Bulma 0.9.4, Font Awesome 6.4.2, MathJax 3, Google Fonts (Noto Sans).
+Everything else is local.
+
+The arXiv icon is an **inline SVG** in `index.html`, not an icon font. The page originally pulled
+Academicons for it, but the pinned version (`academicons@1.9.4`) does not exist on npm, so the
+stylesheet 404'd and the glyph rendered as nothing. Inlining the path removes the dependency
+entirely — the icon can no longer break from a CDN change. The `<span class="icon"><svg>` markup is
+sized by the `.publication-links .icon svg` rule in `index.css`.
 
 ## License
 
